@@ -42,5 +42,4 @@ class Record:
             'Career Status': self.careerStatus,
             'Description': self.description
         }
-
     
