@@ -1,17 +1,10 @@
 import streamlit as st
-from dataloading import DataLoader
 
-df = DataLoader("../Resources/local_db.csv").load_data()
 
 st.set_page_config(
-    page_title="Hello",
+    page_title="Entropy Zero - People Department Automation",
     page_icon="👋",
 )
 
-st.write("# Welcome to Streamlit! 👋")
-
-st.sidebar.success("Select a demo above.")
-
-st.markdown(
-    df.head().to_markdown()
-)
+st.title("Welcome to Entropy Zero👋")
+st.subheader("Data-driven decision making for People Department")
