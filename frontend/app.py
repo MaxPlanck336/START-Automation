@@ -1,7 +1,7 @@
 import streamlit as st
-from frontend.dataloading import DataLoader
+from dataloading import DataLoader
 
-df = DataLoader("Resources/local_db.csv").load_data()
+df = DataLoader("../Resources/local_db.csv").load_data()
 
 st.set_page_config(
     page_title="Hello",
