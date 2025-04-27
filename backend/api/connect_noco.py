@@ -68,7 +68,10 @@ def create_record(data: Data = Body(...)):
     entries_formatted[0] = entries[0]
     entries_formatted[1] = rearrange_date(entries[1])
     entries_formatted[2:4] = entries[2:4]
-    entries_formatted[4] = entries[4][2:]
+    if entries[4] == "No department (Passive or Alumni)":
+        entries_formatted[4] = "No department (Passive or Alumni)"
+    else:
+        entries_formatted[4] = entries[4][2:].strip()
     entries_formatted[5] = ("SS" if entries[5] == "Summersemester" else "WS" if entries[5] == "Wintersemester" else entries[5]) + entries[6][2:]
     entries_formatted[6] = entries[7]
     entries_formatted[7] = entries[8]
