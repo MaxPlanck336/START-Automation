@@ -56,13 +56,22 @@ def uni_histogram(df, colormap="mako"):
     st.pyplot(fig)
 
 def batch_histogram(df, colormap="mako"):
-    batch_groups = df.groupby("Batch")
-    batches = [name.replace("SoSe-", "SS-") for name, _ in batch_groups if "SS-" in name.replace("SoSe-", "SS-") or "WS-" in name]
-    people_per_batch = [len(group) for name, group in batch_groups if name.replace("SoSe-", "SS-") in batches or name in batches]
+    people_per_batch = df.groupby(["Which semester did you join?", "Which year did you join?"]).size()
+    x = []
+    y = []
+    for (semester, year), count in people_per_batch.items():
+        x.append(f"{semester} {year}")
+        y.append(count)
+    batch_dict = dict(zip(x, y))
+    # sort by year and semester
+    batch_dict = dict(sorted(batch_dict.items(), key=lambda item: (item[0].split()[1], item[0].split()[0])))
+    # batch_groups = df.groupby("Which semester did you join?")
+    # batches = [name.replace("SoSe-", "SS-") for name, _ in batch_groups if "SS-" in name.replace("SoSe-", "SS-") or "WS-" in name]
+    # people_per_batch = [len(group) for name, group in batch_groups if name.replace("SoSe-", "SS-") in batches or name in batches]
 
-    batch_dict = dict(zip(batches, people_per_batch))
+    # batch_dict = dict(zip(batches, people_per_batch))
 
-    batch_dict = dict(sorted(batch_dict.items(), key=lambda item: (int(item[0].split("-")[1]), item[0].split("-")[0] == "WS"), reverse=False))
+    # batch_dict = dict(sorted(batch_dict.items(), key=lambda item: (int(item[0].split("-")[1]), item[0].split("-")[0] == "WS"), reverse=False))
 
     sns.set_style("dark")
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -85,10 +94,10 @@ def batch_histogram(df, colormap="mako"):
     st.pyplot(fig)
 
 def member_tier(df, colormap="rocket"):
-    df["Member Tier"] = df["Member Tier"].str.split(", ")
-    df = df.explode("Member Tier")
+    df["Member tier"] = df["Member tier"].str.split(", ")
+    df = df.explode("Member tier")
     
-    tier_counts = df["Member Tier"].value_counts().sort_values()
+    tier_counts = df["Member tier"].value_counts().sort_values()
 
     sns.set_style("dark")
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -97,6 +106,8 @@ def member_tier(df, colormap="rocket"):
 
     ax.set_facecolor("none")
     ax.set_title("Member Tier Distribution", fontsize=16, color="white")
+    ax.set_xlabel("Count", color="white")
+    ax.set_ylabel("Member Tier", color="white")
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
 
@@ -107,7 +118,7 @@ def member_tier(df, colormap="rocket"):
     st.pyplot(fig)
 
 def study_program(df, colormap="mako"):
-    study_programs_dict = df["Study Program"].value_counts()
+    study_programs_dict = df["Study program name"].value_counts()
     study_programs_dict = study_programs_dict[study_programs_dict > 1]
 
     # Create a vertical bar plot
@@ -120,6 +131,7 @@ def study_program(df, colormap="mako"):
     sns.barplot(x=x, y=y, ax=ax, palette=colormap, dodge=False)
 
     ax.set_facecolor("none")
+    ax.set_xlabel("Study Program", color="white")
     ax.set_ylabel("Count", color="white")
     ax.set_title("Study Program Distribution", fontsize=16, color="white")
     ax.tick_params(axis='x', colors='white', rotation=45)
@@ -134,7 +146,7 @@ def study_program(df, colormap="mako"):
     st.pyplot(fig)
 
     # Add another plot with all the other study programs in form of a list
-    other_study_programs = df["Study Program"].value_counts()
+    other_study_programs = df["Study program name"].value_counts()
     other_study_programs = other_study_programs[other_study_programs <= 1]
     
     st.write("Other Study Programs:")
